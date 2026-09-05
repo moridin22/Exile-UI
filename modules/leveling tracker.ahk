@@ -38,7 +38,7 @@
 	vars.leveltracker.acts := []
 	If vars.poe_version
 	{
-		For index, val in [1, 2, 3, 4, 1, 2, 3, 0]
+		For index, val in [1, 2, 3, 4, 3, 2, 1, 0]
 			vars.leveltracker.acts.Push(Lang_Trans("lvltracker_format_" (InStr("567", A_Index) ? "interlude" : "act")) . val)
 		vars.leveltracker.acts.8 := Lang_Trans("lvltracker_format_epilogue")
 	}
@@ -1167,7 +1167,7 @@ Leveltracker_GuideEditor(cHWND)
 	vars.hwnd.leveltracker_editor["font_1minus"] := hwnd, vars.hwnd.leveltracker_editor["font_1reset"] := hwnd1, vars.hwnd.leveltracker_editor["font_1plus"] := hwnd2
 
 	Gui, %GUI_name%: Add, Text, % "ys x+" margin, % Lang_Trans("lvltracker_editor_acts") " "
-	For index, vAct in (vars.poe_version ? [1, 2, 3, 4, "i", "ii", "iii"] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+	For index, vAct in (vars.poe_version ? [1, 2, 3, 4, "iii", "ii", "i"] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 	{
 		Gui, %GUI_name%: Add, Text, % "ys Border Center BackgroundTrans gLeveltracker_GuideEditor HWNDhwnd" (index = 1 ? " x+0" : "") " w" settings.leveltracker.fWidth_editor * 2.5 (vars.poe_version && A_Index > 4 ? " cFF8000" : ""), % vAct
 		Gui, %GUI_name%: Add, Progress, % "Disabled xp yp wp hp Border BackgroundBlack c" (vars.leveltracker_editor.act = index ? "202060" : "Black"), 100
