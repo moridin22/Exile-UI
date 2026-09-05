@@ -1870,6 +1870,31 @@ Leveltracker_ScreencapMenuClose()
 		SnipGuiClose()
 }
 
+Leveltracker_GemLoadouts(gem, profile := "")
+{
+	local
+	global vars, settings
+
+	profile := (profile = "") ? settings.leveltracker.profile : profile
+	loadouts := [], seen := {}
+	For index, skillset in vars.leveltracker["PoB" profile].gems
+		For index, group in skillset.groups
+			For index, gem0 in group.gems
+			{
+				gem_key := LLK_StringRemove(gem0, " |–,vaal ,awakened ") . (InStr(gem0, "|") && !InStr(gem0, "support") ? " support" : "")
+				If (gem_key = gem)
+				{
+					loadout := skillset.title ? skillset.title : "default"
+					If !seen[loadout]
+						seen[loadout] := 1, loadouts.Push(loadout)
+				}
+			}
+
+	For index, loadout in loadouts
+		output .= (!output ? "" : ", ") loadout
+	Return output
+}
+
 Leveltracker_PageDraw(name_main, name_back, preview, ByRef width, ByRef height, ByRef hwnd_old)
 {
 	local
@@ -1999,6 +2024,16 @@ Leveltracker_PageDraw(name_main, name_back, preview, ByRef width, ByRef height, 
 			{
 				Gui, %name_main%: Add, Pic, % "Section xs", % "HBitmap:*" vars.pics.leveltracker.bullet_diamond
 				Gui, %name_main%: Add, Text, % "ys x+0 cFuchsia", % Lang_Trans("lvltracker_" (LLK_HasVal(guide.group1, "buy item", 1) ? "item" : "gem") "buy") . " " Lang_Trans("lvltracker_gembuy", 2)
+				If guide.gemList.Count()
+				{
+					For index, gem in guide.gemList
+					{
+						gem_name := (db.leveltracker.gems[gem].name ? db.leveltracker.gems[gem].name : gem)
+						loadouts := Leveltracker_GemLoadouts(gem, profile)
+						Gui, %name_main%: Add, Progress, % "Disabled Section xs w" (settings.leveltracker.fHeight2 - 2)/2 " h" settings.leveltracker.fHeight2 - 2 " BackgroundBlack", 0
+						Gui, %name_main%: Add, Text, % "ys x+0 cFuchsia", % StrReplace(gem_name, "_", " ") (loadouts ? " (" loadouts ")" : "")
+					}
+				}
 				buy_prompt := 0
 			}
 
